@@ -1,14 +1,51 @@
 const Student = require('../models/Student');
+const { generateRandomPassword, sendCredentialsEmail } = require('../utils/mailer');
+const User = require('../models/user');
 const Joi = require('joi');
+const bcrypt = require('bcryptjs');
 
 module.exports = class StudentController {
     static async createStudent(req, res, next) {
         try {
-            const student = new Student(req.body);
-            await student.save();
-            res.status(201).json(student);
-        } catch (err) {
-            next(err);
+            const { email, fullname, phone, course } = req.body;
+            
+            // Generate temporary password
+            const tempPassword = generateRandomPassword();
+            const hashedPassword = await bcrypt.hash(tempPassword, 12);
+            const username = email.split('@')[0].toLowerCase().substring(0, 8);
+            const registrationDate = Date.now();
+            // Create user account
+            const user = new User({
+                email,
+                password: hashedPassword,
+                fullname,
+                username,
+                role: 'student',
+                mustChangePassword: true
+            });
+
+            // Create student profile
+            const student = new Student({
+                user: user._id,
+                fullname,
+                email,
+                phone,
+                registrationDate: new Date(),
+                course
+            });
+
+            await Promise.all([user.save(), student.save()]);
+            
+            // Send credentials
+            await sendCredentialsEmail(email, tempPassword, 'Student');
+
+            return res.status(201).json({
+                status: "success",
+                message: "Student created and credentials emailed",
+                data: student
+            });
+        } catch (error) {
+            next(error);
         }
     }
 
@@ -35,10 +72,12 @@ module.exports = class StudentController {
         return Joi.object({
             fullname: Joi.string().required(),
             email: Joi.string().email().required(),
+            username:Joi.string().required(),
+            password:Joi.string(),
             phone: Joi.string().required(),
             address: Joi.string(),
             course: Joi.string().regex(/^[0-9a-fA-F]{24}$/),//helps in character collection
-            registrationDate: Joi.date().required(),
+            registrationDate: Joi.date(),
             profileImage: Joi.string(),
             status: Joi.string().valid('active', 'inactive')
         });
