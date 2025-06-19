@@ -14,6 +14,16 @@ module.exports = class StudentController {
             const hashedPassword = await bcrypt.hash(tempPassword, 12);
             const username = email.split('@')[0].toLowerCase().substring(0, 8);
             const registrationDate = Date.now();
+
+            // const existingUser = await Student.findB(email).populate('student')
+
+            // if (existingUser) {
+            //     return res.status(400).json({
+            //     status: "failure",
+            //     message: "Student already exist",
+            //     data: null
+            //     })
+            // }
             // Create user account
             const user = new User({
                 email,

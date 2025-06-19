@@ -64,14 +64,14 @@ module.exports = class EnrollmentController {
             const course = await Course.findById(req.params.courseId)
                 .populate('students', 'fullname email');
             
-            if (!course) return res.status(404).json({ 
+            if (!course) return res.status(404).json({
                 status: "error",
-                message: "Course not found" 
+                message: "Course not found"
             });
 
-            res.json({ 
+            res.json({
                 status: "success",
-                students: course.students 
+                students: course.students
             });
         } catch (err) {
             next(err);
