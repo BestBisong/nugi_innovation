@@ -5,7 +5,7 @@ const adminSchema = new mongoose.Schema({
     fullname: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true, select: false },
-    username: { type: String, required: true, lowercase: true },
+    username: { type: String,  lowercase: true },
     permissions: {
         type: [String],
         default: ['manage_users', 'manage_content', 'system_settings']

@@ -37,6 +37,7 @@ module.exports = class CourseController {
             lessons: Joi.number().required(),
             duration: Joi.string().required(),
             description: Joi.string(),
+            course:Joi.string(),
             image: Joi.string()
         });
     }

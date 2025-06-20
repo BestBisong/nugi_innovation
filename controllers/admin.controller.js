@@ -125,6 +125,7 @@
                 email: Joi.string().email().required(),
                 password: Joi.string().min(6).required(),
                 fullname: Joi.string().required(),
+                role:Joi.string().required(),
                 adminLevel: Joi.string().valid('super', 'regular', 'support').default('regular')
             });
         }
