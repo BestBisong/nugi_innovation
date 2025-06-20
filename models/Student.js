@@ -6,7 +6,6 @@ const studentSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   address:{type:String},
   course: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
   registrationDate: { type: Date, required: true },
   profileImage:{type:String},
   status: { type: String, default: 'inactive' },
